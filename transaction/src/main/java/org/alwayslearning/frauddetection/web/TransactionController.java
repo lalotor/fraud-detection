@@ -16,8 +16,10 @@ public class TransactionController {
 
   @PostMapping("/transactions")
   public ResponseEntity<String> createTransaction(@RequestBody Transaction transaction) {
-    transactionService.processTransaction(transaction);
-    return ResponseEntity.ok("Transaction is being processed");
+    boolean isProcessed = transactionService.processTransaction(transaction);
+    String responseMessage = isProcessed? "Transaction is being processed" :
+        "Transaction is NOT being processed, contact user support";
+    return ResponseEntity.ok(responseMessage);
   }
 
   @GetMapping("/transactions")

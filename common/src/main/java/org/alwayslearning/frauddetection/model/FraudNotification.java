@@ -28,5 +28,10 @@ public class FraudNotification {
   public void setFraudulent(boolean fraudulent) {
     isFraudulent = fraudulent;
   }
+
+  @Override
+  public String toString() {
+    return "FraudNotification{" + "transaction-id=" + transaction.getId() + ", isFraudulent=" + isFraudulent + '\'' + '}';
+  }
 }
 
