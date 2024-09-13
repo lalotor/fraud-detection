@@ -1,5 +1,6 @@
 package org.alwayslearning.frauddetection.web;
 
+import org.alwayslearning.frauddetection.discovery.DiscoveryClientService;
 import org.alwayslearning.frauddetection.model.Transaction;
 import org.alwayslearning.frauddetection.model.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,14 @@ public class TransactionService {
   @Autowired
   private MessageChannel fraudAnalysisChannel;
 
-  @Value("${fraud-analysis.api.url}")
-  private String fraudAnalysisApiUrl;
+  @Autowired
+  private DiscoveryClientService clientService;
+
+  @Value("${fraud-analysis.service.id}")
+  private String fraudAnalysisServicesId;
+
+  @Value("${fraud-analysis.service.endpoint}")
+  private String fraudAnalysisServicesEndpoint;
 
   private final RestTemplate restTemplate;
 
@@ -56,7 +63,8 @@ public class TransactionService {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<Transaction> requestEntity = new HttpEntity<>(transaction, headers);
-    ResponseEntity<Boolean> response = restTemplate.postForEntity(fraudAnalysisApiUrl, requestEntity, Boolean.class);
+    String serviceURL = clientService.getServiceUrl(fraudAnalysisServicesId) + fraudAnalysisServicesEndpoint;
+    ResponseEntity<Boolean> response = restTemplate.postForEntity(serviceURL, requestEntity, Boolean.class);
 
     return !response.getBody();
   }

@@ -1,5 +1,6 @@
 package org.alwayslearning.frauddetection.web;
 
+import org.alwayslearning.frauddetection.discovery.DiscoveryClientService;
 import org.alwayslearning.frauddetection.model.FraudNotification;
 import org.alwayslearning.frauddetection.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,14 @@ public class FraudAnalysisService {
   @Autowired
   private MessageChannel notificationChannel;
 
-  @Value("${notification.api.url}")
-  private String notificationApiUrl;
+  @Autowired
+  private DiscoveryClientService clientService;
+
+  @Value("${notification.service.id}")
+  private String notificationServicesId;
+
+  @Value("${notification.service.endpoint}")
+  private String notificationServicesEndpoint;
 
   private final RestTemplate restTemplate;
 
@@ -44,7 +51,8 @@ public class FraudAnalysisService {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<FraudNotification> requestEntity = new HttpEntity<>(fraudNotification, headers);
-    ResponseEntity<String> response = restTemplate.postForEntity(notificationApiUrl, requestEntity, String.class);
+    String serviceURL = clientService.getServiceUrl(notificationServicesId) + notificationServicesEndpoint;
+    ResponseEntity<String> response = restTemplate.postForEntity(serviceURL, requestEntity, String.class);
 
     System.out.println("Notification response: " + response.getBody());
   }
