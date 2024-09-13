@@ -1,5 +1,7 @@
 package org.alwayslearning.frauddetection.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class FraudNotification {
   private Transaction transaction;
   private boolean isFraudulent;
@@ -21,10 +23,12 @@ public class FraudNotification {
     this.transaction = transaction;
   }
 
+  @JsonProperty("isFraudulent")
   public boolean isFraudulent() {
     return isFraudulent;
   }
 
+  @JsonProperty("isFraudulent")
   public void setFraudulent(boolean fraudulent) {
     isFraudulent = fraudulent;
   }

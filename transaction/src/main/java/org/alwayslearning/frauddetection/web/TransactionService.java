@@ -25,14 +25,15 @@ public class TransactionService {
   @Autowired
   private MessageChannel fraudAnalysisChannel;
 
+  @Value("${fraud-analysis.api.url}")
+  private String fraudAnalysisApiUrl;
+
   private final RestTemplate restTemplate;
 
   public TransactionService(RestTemplateBuilder restTemplateBuilder) {
     this.restTemplate = restTemplateBuilder.build();
   }
 
-  @Value("${fraud-analysis.api.url}")
-  private String fraudAnalysisApiUrl;
 
   public boolean processTransaction(Transaction transaction) {
     if (validateTransaction(transaction)) {

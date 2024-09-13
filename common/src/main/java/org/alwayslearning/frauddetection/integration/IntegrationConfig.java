@@ -23,5 +23,10 @@ public class IntegrationConfig {
     return new DirectChannel();
   }
 
+  @Bean
+  public MessageChannel notificationOutputChannel() {
+    return new DirectChannel();
+  }
+
 }
 

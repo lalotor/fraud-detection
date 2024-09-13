@@ -25,5 +25,10 @@ public class MessageProcessor {
   public void handleOutputMessage(String message) {
     System.out.println("MessageProcessor.handleOutputMessage: " + message);
   }
+
+  @ServiceActivator(inputChannel = "notificationOutputChannel")
+  public void handleNotificationOutputMessage(String message) {
+    System.out.println("MessageProcessor.handleNotificationOutputMessage: " + message);
+  }
 }
 
