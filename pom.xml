@@ -25,6 +25,7 @@
         <module>fraud-analysis</module>
         <module>notification</module>
         <module>discovery-server</module>
+        <module>api-gateway</module>
     </modules>
 
     <dependencyManagement>
