@@ -45,6 +45,14 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
+
+        <!-- Smooks EDI library -->
+        <dependency>
+            <groupId>org.smooks.cartridges.edi</groupId>
+            <artifactId>smooks-edi-cartridge</artifactId>
+            <version>2.0.0-RC4</version>
+        </dependency>
+
     </dependencies>
 
 </project>
