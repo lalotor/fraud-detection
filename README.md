@@ -4,5 +4,5 @@
 Multi-module Spring Boot Project to implement Microservices using GenAI tools 
 
 ## Commands
-- Run tests: ./mvnw clean test
-- Run app: ./mvnw spring-boot:run
+- Run apps: ./scripts/run-all.sh
+- Run specific app: ./mvnw -pl <module-name> spring-boot:run
