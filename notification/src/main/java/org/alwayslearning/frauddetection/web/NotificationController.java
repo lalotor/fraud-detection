@@ -1,5 +1,6 @@
 package org.alwayslearning.frauddetection.web;
 
+import io.micrometer.core.annotation.Timed;
 import org.alwayslearning.frauddetection.model.FraudNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/fraud-detection")
+@Timed("fraud-detection.notification")
 public class NotificationController {
 
   @Autowired

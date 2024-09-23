@@ -1,5 +1,6 @@
 package org.alwayslearning.frauddetection.web;
 
+import io.micrometer.core.annotation.Timed;
 import org.alwayslearning.frauddetection.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/fraud-detection")
+@Timed("fraud-detection.transaction")
 public class TransactionController {
 
   @Autowired
