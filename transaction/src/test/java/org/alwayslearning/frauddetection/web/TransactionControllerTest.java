@@ -1,6 +1,7 @@
 package org.alwayslearning.frauddetection.web;
 
 import org.alwayslearning.frauddetection.model.Transaction;
+import org.alwayslearning.frauddetection.util.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,13 +45,14 @@ class TransactionControllerTest {
 
   @BeforeEach
   void setup() {
-    transaction = getTransactionValid();
+    transaction = TestUtils.getTransactionValid();
     when(transactionService.processTransaction(any(Transaction.class))).thenReturn(true);
   }
 
   @Test
   void testCreateTransactionPositive() {
-    ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/transactions", transaction, String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/transactions", transaction,
+        String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("Transaction is being processed");
@@ -59,10 +61,11 @@ class TransactionControllerTest {
 
   @Test
   void testCreateTransactionNegative() {
-    transaction = getTransactionFraudulent();
+    transaction = TestUtils.getTransactionFraudulent();
     when(transactionService.processTransaction(any(Transaction.class))).thenReturn(false);
 
-    ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/transactions", transaction, String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/transactions", transaction,
+        String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("Transaction is NOT being processed, contact user support");
@@ -73,7 +76,8 @@ class TransactionControllerTest {
   void testCreateTransactionWithInvalidInput() {
     transaction = null;
 
-    ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/transactions", transaction, String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/transactions", transaction,
+        String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     verify(transactionService, times(0)).processTransaction(any(Transaction.class));
@@ -92,7 +96,8 @@ class TransactionControllerTest {
         }
         """;
 
-    ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/transactions", transactionJSON, String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/transactions", transactionJSON,
+        String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     verify(transactionService, times(0)).processTransaction(any(Transaction.class));
@@ -103,8 +108,9 @@ class TransactionControllerTest {
     // Setup a scenario with concurrent requests
     ExecutorService executor = Executors.newFixedThreadPool(10);
     IntStream.range(0, 10).forEach(i -> executor.submit(() -> {
-      Transaction concurrentTransaction = getTransactionValid();
-      ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/transactions", concurrentTransaction, String.class);
+      Transaction concurrentTransaction = TestUtils.getTransactionValid();
+      ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/transactions",
+          concurrentTransaction, String.class);
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }));
     executor.shutdown();
@@ -115,12 +121,9 @@ class TransactionControllerTest {
   void testGetTransactionsWhenEmpty() {
     when(transactionService.getAllTransactions()).thenReturn(Collections.emptyList());
 
-    ResponseEntity<List<Transaction>> response = restTemplate.exchange(
-        getRootUrl() + "/transactions",
-        HttpMethod.GET,
-        null,
-        new ParameterizedTypeReference<List<Transaction>>() {}
-    );
+    ResponseEntity<List<Transaction>> response = restTemplate.exchange(getRootUrl() + "/transactions", HttpMethod.GET
+        , null, new ParameterizedTypeReference<List<Transaction>>() {
+    });
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEmpty();
@@ -130,18 +133,13 @@ class TransactionControllerTest {
 
   @Test
   void testGetTransactionsWithMultipleEntries() {
-    List<Transaction> transactions = List.of(
-        new Transaction(100.0, "USD", LocalDateTime.now(), "ACC123", "ACC456"),
-        new Transaction(200.0, "USD", LocalDateTime.now(), "ACC789", "ACC101")
-    );
+    List<Transaction> transactions = List.of(new Transaction(100.0, "USD", LocalDateTime.now(), "ACC123", "ACC456"),
+        new Transaction(200.0, "USD", LocalDateTime.now(), "ACC789", "ACC101"));
     when(transactionService.getAllTransactions()).thenReturn(transactions);
 
-    ResponseEntity<List<Transaction>> response = restTemplate.exchange(
-        getRootUrl() + "/transactions",
-        HttpMethod.GET,
-        null,
-        new ParameterizedTypeReference<List<Transaction>>() {}
-    );
+    ResponseEntity<List<Transaction>> response = restTemplate.exchange(getRootUrl() + "/transactions", HttpMethod.GET
+        , null, new ParameterizedTypeReference<List<Transaction>>() {
+    });
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).hasSize(2);
@@ -152,12 +150,9 @@ class TransactionControllerTest {
   void testGetTransactionsServiceException() {
     when(transactionService.getAllTransactions()).thenThrow(new RuntimeException("Database error"));
 
-    ResponseEntity<String> response = restTemplate.exchange(
-        getRootUrl() + "/transactions",
-        HttpMethod.GET,
-        null,
-        new ParameterizedTypeReference<String>() {}
-    );
+    ResponseEntity<String> response = restTemplate.exchange(getRootUrl() + "/transactions", HttpMethod.GET, null,
+        new ParameterizedTypeReference<String>() {
+    });
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     verify(transactionService, times(1)).getAllTransactions();
@@ -165,20 +160,6 @@ class TransactionControllerTest {
 
   private String getRootUrl() {
     return "http://localhost:" + port + "/fraud-detection";
-  }
-
-  private Transaction getTransactionValid() {
-    Transaction transactionL = new Transaction(1000.0, "COP", LocalDateTime.now(), "DRT45S99IJY2S", "DRT45S99IJOK7");
-    transactionL.setId(1L);
-
-    return transactionL;
-  }
-
-  private Transaction getTransactionFraudulent() {
-    Transaction transactionL = new Transaction(100000.0, "COP", LocalDateTime.now(), "DRT45S99IJY2S", "DRT45S99IJOK7");
-    transactionL.setId(1L);
-
-    return transactionL;
   }
 
 }

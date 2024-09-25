@@ -3,51 +3,45 @@ package org.alwayslearning.frauddetection.web;
 import org.alwayslearning.frauddetection.discovery.DiscoveryClientService;
 import org.alwayslearning.frauddetection.model.Transaction;
 import org.alwayslearning.frauddetection.model.TransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 public class TransactionService {
 
-  @Autowired
-  private TransactionRepository transactionRepository;
-
-  @Autowired
-  private MessageChannel fraudAnalysisChannel;
-
-  @Autowired
-  private DiscoveryClientService clientService;
-
+  private final TransactionRepository transactionRepository;
+  private final MessageChannel fraudAnalysisChannel;
+  private final DiscoveryClientService clientService;
+  private final RestTemplate restTemplate;
   @Value("${fraud-analysis.service.id}")
   private String fraudAnalysisServicesId;
-
   @Value("${fraud-analysis.service.endpoint}")
   private String fraudAnalysisServicesEndpoint;
 
-  private final RestTemplate restTemplate;
-
-  public TransactionService(RestTemplateBuilder restTemplateBuilder) {
-    this.restTemplate = restTemplateBuilder.build();
+  public TransactionService(TransactionRepository transactionRepository,
+                            @Qualifier("fraudAnalysisChannel") MessageChannel fraudAnalysisChannel,
+                            DiscoveryClientService clientService, RestTemplate restTemplate) {
+    this.transactionRepository = transactionRepository;
+    this.fraudAnalysisChannel = fraudAnalysisChannel;
+    this.clientService = clientService;
+    this.restTemplate = restTemplate;
   }
 
 
   public boolean processTransaction(Transaction transaction) {
     if (validateTransaction(transaction)) {
       transactionRepository.save(transaction);
-      fraudAnalysisChannel.send(MessageBuilder.withPayload(transaction)
-          .setReplyChannelName("outputChannel")
-          .build());
+      fraudAnalysisChannel.send(MessageBuilder.withPayload(transaction).setReplyChannelName("outputChannel").build());
 
       return true;
     } else {
@@ -56,7 +50,7 @@ public class TransactionService {
   }
 
   public List<Transaction> getAllTransactions() {
-      return transactionRepository.findAll();
+    return transactionRepository.findAll();
   }
 
   private boolean validateTransaction(Transaction transaction) {
@@ -66,7 +60,7 @@ public class TransactionService {
     String serviceURL = clientService.getServiceUrl(fraudAnalysisServicesId) + fraudAnalysisServicesEndpoint;
     ResponseEntity<Boolean> response = restTemplate.postForEntity(serviceURL, requestEntity, Boolean.class);
 
-    return !response.getBody();
+    return Boolean.FALSE.equals(response.getBody());
   }
 }
 

@@ -46,3 +46,6 @@ generated/
 
 # Logs
 *.log
+
+# macos
+.DS_Store

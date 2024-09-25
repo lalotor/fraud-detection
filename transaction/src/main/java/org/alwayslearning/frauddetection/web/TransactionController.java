@@ -3,7 +3,6 @@ package org.alwayslearning.frauddetection.web;
 import io.micrometer.core.annotation.Timed;
 import jakarta.validation.Valid;
 import org.alwayslearning.frauddetection.model.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +13,11 @@ import java.util.List;
 @Timed("fraud-detection.transaction")
 public class TransactionController {
 
-  @Autowired
-  private TransactionService transactionService;
+  private final TransactionService transactionService;
+
+  public TransactionController(TransactionService transactionService) {
+    this.transactionService = transactionService;
+  }
 
   @PostMapping("/transactions")
   public ResponseEntity<String> createTransaction(@Valid @RequestBody Transaction transaction) {
