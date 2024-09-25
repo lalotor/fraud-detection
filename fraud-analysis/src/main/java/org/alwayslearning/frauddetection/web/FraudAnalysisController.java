@@ -1,6 +1,7 @@
 package org.alwayslearning.frauddetection.web;
 
 import io.micrometer.core.annotation.Timed;
+import jakarta.validation.Valid;
 import org.alwayslearning.frauddetection.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ public class FraudAnalysisController {
   private FraudAnalysisService fraudAnalysisService;
 
   @PostMapping("/analyze")
-  public ResponseEntity<Boolean> analyzeTransaction(@RequestBody Transaction transaction) {
+  public ResponseEntity<Boolean> analyzeTransaction(@Valid @RequestBody Transaction transaction) {
     return ResponseEntity.ok(fraudAnalysisService.analyzeTransaction(transaction));
   }
 }

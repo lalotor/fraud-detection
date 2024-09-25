@@ -1,6 +1,7 @@
 package org.alwayslearning.frauddetection.web;
 
 import io.micrometer.core.annotation.Timed;
+import jakarta.validation.Valid;
 import org.alwayslearning.frauddetection.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class TransactionController {
   private TransactionService transactionService;
 
   @PostMapping("/transactions")
-  public ResponseEntity<String> createTransaction(@RequestBody Transaction transaction) {
+  public ResponseEntity<String> createTransaction(@Valid @RequestBody Transaction transaction) {
     boolean isProcessed = transactionService.processTransaction(transaction);
     String responseMessage = isProcessed? "Transaction is being processed" :
         "Transaction is NOT being processed, contact user support";

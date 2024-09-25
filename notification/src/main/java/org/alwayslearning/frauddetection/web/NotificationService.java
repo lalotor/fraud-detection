@@ -21,7 +21,7 @@ public class NotificationService {
   }
 
   private void sendAlertToSecurityTeam(Transaction transaction) {
-    String transactionInCustomFormat = EDI_TRANSLATOR.translateToXML(transaction);
+    final var transactionInCustomFormat = toCustomFormat(transaction);
     System.out.println("Logic to alert security team in custom format: " + transactionInCustomFormat);
   }
 
@@ -34,8 +34,16 @@ public class NotificationService {
   }
 
   private void logNonFraudulentActivity(Transaction transaction) {
-    String transactionInCustomFormat = EDI_TRANSLATOR.translateToXML(transaction);
+    final var transactionInCustomFormat = toCustomFormat(transaction);
     System.out.println("Logic to log non-fraudulent transactions in custom format: " + transactionInCustomFormat);
+  }
+
+  private String toCustomFormat(Transaction transaction) {
+    if (transaction == null) {
+      System.out.println("Invalid transaction");
+      return "";
+    }
+    return EDI_TRANSLATOR.translateToXML(transaction);
   }
 }
 

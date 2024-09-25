@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,10 +13,15 @@ public class Transaction {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+  @NotNull(message = "Amount cannot be null")
   private Double amount;
+  @NotNull(message = "Currency cannot be null")
   private String currency;
+  @NotNull(message = "Timestamp cannot be null")
   private LocalDateTime timestamp;
+  @NotNull(message = "Source account cannot be null")
   private String sourceAccount;
+  @NotNull(message = "Destination account cannot be null")
   private String destinationAccount;
 
   // Constructors, getters, and setters

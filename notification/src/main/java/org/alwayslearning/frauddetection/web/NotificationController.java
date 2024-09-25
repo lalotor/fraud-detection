@@ -1,6 +1,7 @@
 package org.alwayslearning.frauddetection.web;
 
 import io.micrometer.core.annotation.Timed;
+import jakarta.validation.Valid;
 import org.alwayslearning.frauddetection.model.FraudNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class NotificationController {
   private NotificationService notificationService;
 
   @PostMapping("/notifications")
-  public ResponseEntity<String> handleNotification(@RequestBody FraudNotification fraudNotification) {
+  public ResponseEntity<String> handleNotification(@Valid @RequestBody FraudNotification fraudNotification) {
     notificationService.processNotification(fraudNotification);
     return ResponseEntity.ok("Notification processed");
   }
