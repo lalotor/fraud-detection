@@ -32,7 +32,7 @@ public class FraudAnalysisStepDefinitions {
   private RestTemplate restTemplate;
 
   private Transaction transaction;
-  private boolean transactionResult;
+  private boolean result;
 
   @Given("a setup for a transaction response")
   public void a_setup_for_a_transaction_response() {
@@ -41,28 +41,28 @@ public class FraudAnalysisStepDefinitions {
         .thenReturn(mockResponse);
   }
 
-  @Given("a valid transaction")
-  public void a_valid_transaction() {
+  @Given("a transaction with amount below fraud threshold")
+  public void a_transaction_with_amount_below_fraud_threshold() {
     transaction = TestUtils.getTransactionValid();
   }
 
-  @Given("a fraudulent transaction")
-  public void a_fraudulent_transaction() {
+  @Given("a transaction with amount above fraud threshold")
+  public void a_transaction_with_amount_above_fraud_threshold() {
     transaction = TestUtils.getTransactionFraudulent();
   }
 
-  @When("the transaction is processed")
-  public void the_transaction_is_processed() {
-    transactionResult = fraudAnalysisService.analyzeTransaction(transaction);
+  @When("the transaction is analyzed")
+  public void the_transaction_is_analyzed() {
+    result = fraudAnalysisService.analyzeTransaction(transaction);
   }
 
-  @Then("the transaction should be successful")
-  public void the_transaction_should_be_successful() {
-    assertFalse(transactionResult);
+  @Then("the transaction should not be flagged as fraudulent")
+  public void the_transaction_should_not_be_flagged_as_fraudulent() {
+    assertFalse(result);
   }
 
-  @Then("the transaction should be fraudulent")
-  public void the_transaction_should_be_fraudulent() {
-    assertTrue(transactionResult);
+  @Then("the transaction should be flagged as fraudulent")
+  public void the_transaction_should_be_flagged_as_fraudulent() {
+    assertTrue(result);
   }
 }
