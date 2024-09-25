@@ -1,9 +1,6 @@
 package org.alwayslearning.frauddetection.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
@@ -18,6 +15,7 @@ public class Transaction {
   @NotNull(message = "Currency cannot be null")
   private String currency;
   @NotNull(message = "Timestamp cannot be null")
+  @Column(name = "creationDate")
   private LocalDateTime timestamp;
   @NotNull(message = "Source account cannot be null")
   private String sourceAccount;

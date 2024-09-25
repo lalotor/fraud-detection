@@ -73,21 +73,18 @@ class FraudAnalysisControllerTest {
 
   @Test
   void testAnalyzeTransactionWithUnsupportedMediaType() {
-    String fraudNotificationJSON = """
+    String transactionJSON = """
         {
-            "isFraudulent": false,
-            "transaction": {
-                "id": "0",
-                "amount": 1000,
-                "currency": "COP",
-                "timestamp": "2024-09-08T20:06:58.147Z",
-                "sourceAccount": "DRT45S99IJY2S",
-                "destinationAccount": "DRT45S99IJOK7"
-            }
+          "id": "0",
+          "amount": 1000,
+          "currency": "COP",
+          "timestamp": "2024-09-08T20:06:58.147Z",
+          "sourceAccount": "DRT45S99IJY2S",
+          "destinationAccount": "DRT45S99IJOK7"
         }
         """;
 
-    ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/analyze", fraudNotificationJSON, String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/analyze", transactionJSON, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     verify(fraudAnalysisService, times(0)).analyzeTransaction(any(Transaction.class));
