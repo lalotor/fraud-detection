@@ -2,9 +2,13 @@ package org.alwayslearning.frauddetection.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Setter
+@Getter
 @Entity
 public class Transaction {
   @Id
@@ -31,54 +35,6 @@ public class Transaction {
     this.currency = currency;
     this.timestamp = timestamp;
     this.sourceAccount = sourceAccount;
-    this.destinationAccount = destinationAccount;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Double getAmount() {
-    return amount;
-  }
-
-  public void setAmount(Double amount) {
-    this.amount = amount;
-  }
-
-  public String getCurrency() {
-    return currency;
-  }
-
-  public void setCurrency(String currency) {
-    this.currency = currency;
-  }
-
-  public LocalDateTime getTimestamp() {
-    return timestamp;
-  }
-
-  public void setTimestamp(LocalDateTime timestamp) {
-    this.timestamp = timestamp;
-  }
-
-  public String getSourceAccount() {
-    return sourceAccount;
-  }
-
-  public void setSourceAccount(String sourceAccount) {
-    this.sourceAccount = sourceAccount;
-  }
-
-  public String getDestinationAccount() {
-    return destinationAccount;
-  }
-
-  public void setDestinationAccount(String destinationAccount) {
     this.destinationAccount = destinationAccount;
   }
 

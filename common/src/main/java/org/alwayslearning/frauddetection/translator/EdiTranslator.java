@@ -1,10 +1,10 @@
 package org.alwayslearning.frauddetection.translator;
 
+import org.alwayslearning.frauddetection.exception.TranslatorException;
 import org.alwayslearning.frauddetection.model.Transaction;
 import org.smooks.Smooks;
 import org.smooks.api.ExecutionContext;
 import org.smooks.io.payload.JavaSource;
-import org.smooks.io.payload.StringResult;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamResult;
@@ -17,17 +17,14 @@ public class EdiTranslator {
 
   public String translateToXML(Transaction transaction) {
     Smooks smooks = new Smooks();
-    try {
+    try (StringWriter writer = new StringWriter()) {
       smooks = new Smooks(SMOOKS_CONFIG);
       ExecutionContext executionContext = smooks.createExecutionContext();
-      StringWriter writer = new StringWriter();
       smooks.filterSource(executionContext, new JavaSource(transaction), new StreamResult(writer));
 
       return writer.toString();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    } catch (SAXException e) {
-      throw new RuntimeException(e);
+    } catch (IOException | SAXException e) {
+      throw new TranslatorException(e);
     } finally {
       smooks.close();
     }

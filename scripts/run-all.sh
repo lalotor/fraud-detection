@@ -13,4 +13,4 @@ nohup ./mvnw -pl fraud-analysis spring-boot:run -Dcommon.id=fraud-detection > sc
 nohup ./mvnw -pl transaction spring-boot:run -Dcommon.id=fraud-detection > scripts/transaction-service.log 2>&1 &
 nohup ./mvnw -pl api-gateway spring-boot:run -Dcommon.id=fraud-detection > scripts/api-gateway.log 2>&1 &
 echo "Waiting for apps to start"
-sleep 15
+sleep 30
