@@ -1,7 +1,7 @@
 package org.alwayslearning.frauddetection.web;
 
 import org.alwayslearning.frauddetection.model.FraudNotification;
-import org.alwayslearning.frauddetection.model.Transaction;
+import org.alwayslearning.frauddetection.util.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,8 +13,6 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -37,8 +35,8 @@ class NotificationControllerTest {
 
   @BeforeEach
   void setup() {
-    fraudNotification = getFraudNotificationValid();
-    doNothing().when(notificationService).processNotification(any(FraudNotification.class));
+    fraudNotification = TestUtils.getFraudNotificationValid();
+    when(notificationService.processNotification(any(FraudNotification.class))).thenReturn(true);
   }
 
   @Test
@@ -95,15 +93,6 @@ class NotificationControllerTest {
 
   private String getRootUrl() {
     return "http://localhost:" + port + "/fraud-detection";
-  }
-
-  private FraudNotification getFraudNotificationValid() {
-    FraudNotification fraudNotificationL = new FraudNotification();
-    Transaction transaction = new Transaction(10000.0, "COP", LocalDateTime.now(), "DRT45S99IJY2S", "DRT45S99IJOK7");
-    transaction.setId(1L);
-    fraudNotificationL.setTransaction(transaction);
-
-    return fraudNotificationL;
   }
 
 }

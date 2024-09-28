@@ -2,8 +2,12 @@ package org.alwayslearning.frauddetection.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 public class  FraudNotification {
+  @Setter
+  @Getter
   @NotNull(message = "Transaction cannot be null")
   private Transaction transaction;
   private boolean isFraudulent;
@@ -17,11 +21,7 @@ public class  FraudNotification {
     this.isFraudulent = isFraudulent;
   }
 
-  public Transaction getTransaction() {
-    return transaction;
-  }
-
-  public void setTransaction(Transaction transaction) {
+  public FraudNotification(Transaction transaction) {
     this.transaction = transaction;
   }
 

@@ -5,7 +5,7 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${logFileDir}/fraud-detection-transaction.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${logFileDir}/graph-people-search.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${logFileDir}/fraud-detection-transaction.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>3</maxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>10MB</maxFileSize>

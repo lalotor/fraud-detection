@@ -3,9 +3,9 @@
     <springProperty scope="context" name="logFileDir" source="logging.rolling-file.folder"
                     defaultValue="/var/log/containers"/>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${logFileDir}/fraud-detection-fraud-analysis.log</file>
+        <file>${logFileDir}/fraud-detection-notification.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${logFileDir}/fraud-detection-fraud-analysis.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${logFileDir}/fraud-detection-notification.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>3</maxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>10MB</maxFileSize>

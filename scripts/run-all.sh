@@ -1,6 +1,12 @@
 echo "Killing apps"
 pkill -9 -f fraud-detection || echo "Failed to kill any apps"
 
+echo "Killing containers"
+docker-compose kill || echo "No docker containers are running"
+
+echo "Running infra"
+docker-compose up -d tracing-server
+
 echo "Running apps"
 nohup ./mvnw -pl config-server spring-boot:run -Dcommon.id=fraud-detection > scripts/config-server.log 2>&1 &
 echo "Waiting for config server to start"
