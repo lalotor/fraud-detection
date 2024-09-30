@@ -47,6 +47,10 @@ class TransactionControllerTest {
   void setup() {
     transaction = TestUtils.getTransactionValid();
     when(transactionService.processTransaction(any(Transaction.class))).thenReturn(true);
+
+    Transaction transactionL = new Transaction(100.0, "USD", LocalDateTime.now(), "ACC123", "ACC456");
+    transactionL.setId(99L);
+    when(transactionService.getTransactionById(99L)).thenReturn(transactionL);
   }
 
   @Test
@@ -156,6 +160,27 @@ class TransactionControllerTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     verify(transactionService, times(1)).getAllTransactions();
+  }
+
+  @Test
+  void testGetTransaction() {
+    ResponseEntity<Transaction> response = restTemplate.getForEntity(getRootUrl() + "/transactions/99",
+        Transaction.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().getId()).isEqualTo(99L);
+    assertThat(response.getBody().getAmount()).isEqualTo(100.0);
+    verify(transactionService, times(1)).getTransactionById(anyLong());
+  }
+
+  @Test
+  void testGetTransactionWhenNotFound() {
+    ResponseEntity<Transaction> response = restTemplate.getForEntity(getRootUrl() + "/transactions/25",
+        Transaction.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    verify(transactionService, times(1)).getTransactionById(25L);
   }
 
   private String getRootUrl() {

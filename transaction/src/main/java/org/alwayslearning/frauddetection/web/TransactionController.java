@@ -32,5 +32,15 @@ public class TransactionController {
     List<Transaction> transactions = transactionService.getAllTransactions();
     return ResponseEntity.ok(transactions);
   }
+
+  @GetMapping("/transactions/{requestedId}")
+  public ResponseEntity<Transaction> getTransactionById(@PathVariable("requestedId") Long requestedId) {
+    Transaction transaction = transactionService.getTransactionById(requestedId);
+    if (transaction != null) {
+      return ResponseEntity.ok(transaction);
+    } else {
+      return ResponseEntity.notFound().build();
+    }
+  }
 }
 

@@ -53,6 +53,10 @@ public class TransactionService {
     return transactionRepository.findAll();
   }
 
+  public Transaction getTransactionById(Long id) {
+    return transactionRepository.findById(id).orElse(null);
+  }
+
   private boolean validateTransaction(Transaction transaction) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
