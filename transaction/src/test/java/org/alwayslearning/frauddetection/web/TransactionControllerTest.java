@@ -3,6 +3,7 @@ package org.alwayslearning.frauddetection.web;
 import org.alwayslearning.frauddetection.model.Transaction;
 import org.alwayslearning.frauddetection.util.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,6 +182,24 @@ class TransactionControllerTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     verify(transactionService, times(1)).getTransactionById(25L);
+  }
+
+  @Test
+  @Disabled
+  void testCircuitBreaker() {
+    when(transactionService.processTransaction(any(Transaction.class))).thenThrow(new RuntimeException("General error"));
+
+    IntStream.rangeClosed(1, 5).forEach(i -> {
+      ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/transactions",
+          TestUtils.getTransactionValid(), String.class);
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+
+    IntStream.rangeClosed(1, 5).forEach(i -> {
+      ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/transactions",
+          TestUtils.getTransactionValid(), String.class);
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+    });
   }
 
   private String getRootUrl() {

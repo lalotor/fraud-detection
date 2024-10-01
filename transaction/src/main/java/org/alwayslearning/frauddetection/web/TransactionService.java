@@ -1,5 +1,6 @@
 package org.alwayslearning.frauddetection.web;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.alwayslearning.frauddetection.discovery.DiscoveryClientService;
 import org.alwayslearning.frauddetection.model.Transaction;
 import org.alwayslearning.frauddetection.model.TransactionRepository;
@@ -37,7 +38,7 @@ public class TransactionService {
     this.restTemplate = restTemplate;
   }
 
-
+  @CircuitBreaker(name = "CircuitBreakerService")
   public boolean processTransaction(Transaction transaction) {
     if (validateTransaction(transaction)) {
       transactionRepository.save(transaction);
