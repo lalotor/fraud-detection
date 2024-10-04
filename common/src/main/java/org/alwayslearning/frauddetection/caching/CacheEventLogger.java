@@ -1,4 +1,4 @@
-package org.alwayslearning.frauddetection.config;
+package org.alwayslearning.frauddetection.caching;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ehcache.event.CacheEvent;

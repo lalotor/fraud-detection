@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.concurrent.ExecutionException;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -59,8 +61,8 @@ public class TransactionStepDefinitions {
   }
 
   @When("the transaction is processed")
-  public void the_transaction_is_processed() {
-    transactionResult = transactionService.processTransaction(transaction);
+  public void the_transaction_is_processed() throws ExecutionException, InterruptedException {
+    transactionResult = transactionService.processTransaction(transaction).get();
   }
 
   @Then("the transaction should be successful")

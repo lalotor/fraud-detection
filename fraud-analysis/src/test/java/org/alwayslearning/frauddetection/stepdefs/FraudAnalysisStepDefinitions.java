@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.concurrent.ExecutionException;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,8 +54,8 @@ public class FraudAnalysisStepDefinitions {
   }
 
   @When("the transaction is analyzed")
-  public void the_transaction_is_analyzed() {
-    result = fraudAnalysisService.analyzeTransaction(transaction);
+  public void the_transaction_is_analyzed() throws ExecutionException, InterruptedException {
+    result = fraudAnalysisService.analyzeTransaction(transaction).get();
   }
 
   @Then("the transaction should not be flagged as fraudulent")

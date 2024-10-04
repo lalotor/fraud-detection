@@ -2,7 +2,7 @@ package org.alwayslearning.frauddetection.web;
 
 import org.alwayslearning.frauddetection.TransactionApplication;
 import org.alwayslearning.frauddetection.model.Transaction;
-import org.alwayslearning.frauddetection.model.TransactionRepository;
+import org.alwayslearning.frauddetection.repository.TransactionRepository;
 import org.alwayslearning.frauddetection.util.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;

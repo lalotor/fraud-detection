@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 @RestController
 @RequestMapping("/fraud-detection")
 @Timed("fraud-detection.fraud-analysis")
@@ -21,8 +24,9 @@ public class FraudAnalysisController {
   }
 
   @PostMapping("/analyze")
-  public ResponseEntity<Boolean> analyzeTransaction(@Valid @RequestBody Transaction transaction) {
-    return ResponseEntity.ok(fraudAnalysisService.analyzeTransaction(transaction));
+  public ResponseEntity<Boolean> analyzeTransaction(@Valid @RequestBody Transaction transaction) throws ExecutionException, InterruptedException {
+    CompletableFuture<Boolean> isFraudulentFuture = fraudAnalysisService.analyzeTransaction(transaction);
+    return ResponseEntity.ok(isFraudulentFuture.get());
   }
 }
 

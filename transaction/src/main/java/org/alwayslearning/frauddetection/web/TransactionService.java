@@ -1,9 +1,10 @@
 package org.alwayslearning.frauddetection.web;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.extern.slf4j.Slf4j;
 import org.alwayslearning.frauddetection.discovery.DiscoveryClientService;
 import org.alwayslearning.frauddetection.model.Transaction;
-import org.alwayslearning.frauddetection.model.TransactionRepository;
+import org.alwayslearning.frauddetection.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -12,12 +13,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
+@EnableAsync
+@Slf4j
 public class TransactionService {
 
   private final TransactionRepository transactionRepository;
@@ -39,14 +45,16 @@ public class TransactionService {
   }
 
   @CircuitBreaker(name = "CircuitBreakerService")
-  public boolean processTransaction(Transaction transaction) {
+  @Async("taskExecutor")
+  public CompletableFuture<Boolean> processTransaction(Transaction transaction) {
+    log.debug("Transaction to process: {}", transaction);
+    transactionRepository.save(transaction);
     if (validateTransaction(transaction)) {
-      transactionRepository.save(transaction);
       fraudAnalysisChannel.send(MessageBuilder.withPayload(transaction).setReplyChannelName("outputChannel").build());
 
-      return true;
+      return CompletableFuture.completedFuture(true);
     } else {
-      return false;
+      return CompletableFuture.completedFuture(false);
     }
   }
 
@@ -67,5 +75,5 @@ public class TransactionService {
 
     return Boolean.FALSE.equals(response.getBody());
   }
-}
 
+}

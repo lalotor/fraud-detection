@@ -6,16 +6,22 @@ import org.alwayslearning.frauddetection.model.FraudNotification;
 import org.alwayslearning.frauddetection.model.Transaction;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.concurrent.CompletableFuture;
+
 @Service
+@EnableAsync
 @Slf4j
 public class FraudAnalysisService {
 
@@ -35,14 +41,17 @@ public class FraudAnalysisService {
     this.restTemplate = restTemplate;
   }
 
-  public boolean analyzeTransaction(Transaction transaction) {
+  @Cacheable(value = "analyzeTransactions", key="#p0.id", condition="#p0.id != null", unless = "#result == null")
+  @Async("taskExecutor")
+  public CompletableFuture<Boolean> analyzeTransaction(Transaction transaction) {
+    log.debug("Transaction to analyze: {}", transaction);
     boolean isFraudulent = performAnalysis(transaction);
     FraudNotification fraudNotification = new FraudNotification(transaction, isFraudulent);
     notificationChannel.send(MessageBuilder.withPayload(fraudNotification).setReplyChannelName(
         "notificationOutputChannel").build());
     notifyTransaction(fraudNotification);
 
-    return isFraudulent;
+    return CompletableFuture.completedFuture(isFraudulent);
   }
 
   private void notifyTransaction(FraudNotification fraudNotification) {

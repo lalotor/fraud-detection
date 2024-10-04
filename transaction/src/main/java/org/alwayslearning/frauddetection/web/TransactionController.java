@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/fraud-detection")
@@ -20,9 +22,9 @@ public class TransactionController {
   }
 
   @PostMapping("/transactions")
-  public ResponseEntity<String> createTransaction(@Valid @RequestBody Transaction transaction) {
-    boolean isProcessed = transactionService.processTransaction(transaction);
-    String responseMessage = isProcessed? "Transaction is being processed" :
+  public ResponseEntity<String> createTransaction(@Valid @RequestBody Transaction transaction) throws ExecutionException, InterruptedException {
+    CompletableFuture<Boolean> isProcessedFuture = transactionService.processTransaction(transaction);
+    String responseMessage = Boolean.TRUE.equals(isProcessedFuture.get())? "Transaction is being processed" :
         "Transaction is NOT being processed, contact user support";
     return ResponseEntity.ok(responseMessage);
   }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @Entity
+@ToString
 public class Transaction implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,9 +41,5 @@ public class Transaction implements Serializable {
     this.destinationAccount = destinationAccount;
   }
 
-  @Override
-  public String toString() {
-    return "Transaction{" + "id=" + id + ", amount=" + amount + ", currency='" + currency + '\'' + ", timestamp=" + timestamp + ", sourceAccount='" + sourceAccount + '\'' + ", destinationAccount='" + destinationAccount + '\'' + '}';
-  }
 }
 

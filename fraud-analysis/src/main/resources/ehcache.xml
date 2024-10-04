@@ -5,9 +5,7 @@
             http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd
             http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.0.xsd">
 
-    <cache alias="transactions">
-        <key-type>java.lang.Long</key-type>
-        <value-type>org.alwayslearning.frauddetection.model.Transaction</value-type>
+    <cache alias="analyzeTransactions">
         <expiry>
             <ttl unit="seconds">60</ttl>
         </expiry>

@@ -1,5 +1,6 @@
-package org.alwayslearning.frauddetection.model;
+package org.alwayslearning.frauddetection.repository;
 
+import org.alwayslearning.frauddetection.model.Transaction;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 

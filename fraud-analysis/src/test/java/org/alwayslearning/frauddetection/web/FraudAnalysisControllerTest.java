@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.concurrent.CompletableFuture;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -36,7 +38,7 @@ class FraudAnalysisControllerTest {
   @BeforeEach
   void setup() {
     transaction = TestUtils.getTransactionValid();
-    when(fraudAnalysisService.analyzeTransaction(any(Transaction.class))).thenReturn(false);
+    when(fraudAnalysisService.analyzeTransaction(any(Transaction.class))).thenReturn(CompletableFuture.completedFuture(false));
   }
 
   @Test
@@ -52,7 +54,7 @@ class FraudAnalysisControllerTest {
   @Test
   void testAnalyzeTransactionNegative() {
     transaction = TestUtils.getTransactionFraudulent();
-    when(fraudAnalysisService.analyzeTransaction(any(Transaction.class))).thenReturn(true);
+    when(fraudAnalysisService.analyzeTransaction(any(Transaction.class))).thenReturn(CompletableFuture.completedFuture(true));
 
     ResponseEntity<Boolean> response = restTemplate.postForEntity(getRootUrl() + "/analyze", transaction,
         Boolean.class);

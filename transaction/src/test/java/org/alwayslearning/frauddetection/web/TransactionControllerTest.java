@@ -20,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -47,7 +48,7 @@ class TransactionControllerTest {
   @BeforeEach
   void setup() {
     transaction = TestUtils.getTransactionValid();
-    when(transactionService.processTransaction(any(Transaction.class))).thenReturn(true);
+    when(transactionService.processTransaction(any(Transaction.class))).thenReturn(CompletableFuture.completedFuture(true));
 
     Transaction transactionL = new Transaction(100.0, "USD", LocalDateTime.now(), "ACC123", "ACC456");
     transactionL.setId(99L);
@@ -67,7 +68,7 @@ class TransactionControllerTest {
   @Test
   void testCreateTransactionNegative() {
     transaction = TestUtils.getTransactionFraudulent();
-    when(transactionService.processTransaction(any(Transaction.class))).thenReturn(false);
+    when(transactionService.processTransaction(any(Transaction.class))).thenReturn(CompletableFuture.completedFuture(false));
 
     ResponseEntity<String> response = restTemplate.postForEntity(getRootUrl() + "/transactions", transaction,
         String.class);
